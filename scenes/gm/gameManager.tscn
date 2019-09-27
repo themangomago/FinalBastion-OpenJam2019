@@ -21,14 +21,6 @@ margin_top = 294.883
 margin_right = 52.3268
 margin_bottom = 308.883
 
-[node name="TileMap" type="TileMap" parent="."]
-position = Vector2( 164, 96 )
-cell_size = Vector2( 64, 32 )
-format = 1
-__meta__ = {
-"_edit_lock_": true
-}
-
 [node name="platform" type="Sprite" parent="."]
 texture = ExtResource( 2 )
 centered = false
@@ -37,6 +29,7 @@ offset = Vector2( 160, 96 )
 [node name="tiles" type="YSort" parent="platform"]
 
 [node name="tile" parent="." instance=ExtResource( 3 )]
+position = Vector2( -68, 0 )
 
 [node name="clickDelay" type="Timer" parent="."]
 wait_time = 0.75
