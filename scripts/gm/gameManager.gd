@@ -26,35 +26,53 @@ var attackStrength = 6
 
 func _ready():
 	randomize()
-	populate()
+	populateBoard()
 	nextTile()
-	updateAttack()
+	attackGetNewTarget()
 
 
-func updateAttack():
-	attackLane = randi()%5
+func attackGetNewTarget():
+	attackLane = randi() % 5
 	attackStrength += 2
 	$attackIndicator.setStrength(attackStrength)
 	$attackIndicator.position = Vector2(164, 32) + Vector2(64 * attackLane, 0)
-	updateTurns(true)
-	
+	turnUpdate(true)
 
-func performAttack():
+
+func attackPerform():
 	pass
+
+
+func nextTile():
+	var color = randi()%3
+	var power = randi()%2
+	$platform/tile.setup(color, power)
+
+
+func turnUpdate(reset = false):
+	if reset:
+		turnsLeft = 5 + 1
+	turnsLeft -= 1
+	$turnLabel.set_text("Turns Left: " + str(turnsLeft))
+	
+	if turnsLeft == 0:
+		attackPerform()
+
 
 func _input(event):
 	if event is InputEventMouseButton:
-		processClick()
+		inputProcessClick()
 	elif event is InputEventMouseMotion:
 		$mouse.set_text(str(event.position))
 		var coords = worldToMap(event.position)
 		$debug.set_text(str(coords))
-		validMousePosition = checkValidPosition(coords)
+		validMousePosition = inputCheckBuildPosition(coords)
 
 		if validMousePosition:
 			$platform/tile.position = Vector2(64, 32) * coords + bp
 
-func processClick():
+
+func inputProcessClick():
 	if validMousePosition and clickReady:
 		clickReady = false
 		$clickDelay.start()
@@ -66,7 +84,7 @@ func processClick():
 		$platform/tiles.add_child(curTile)
 
 		for step in range(0, 5):
-			nextTile = getNextTile(step)
+			nextTile = dbGetNextTile(step)
 			#print(nextTile)
 			
 			# Look for mergeables
@@ -90,73 +108,13 @@ func processClick():
 			#print("found @ pos: " + str(mergeableFound))
 
 		nextTile()
-		updateTurns()
+		turnUpdate()
 #		print("Board:")
 #		print(board)
 #		print("Childs: "+ str($platform/tiles.get_child_count()))
 
 
-func getOffGridPosition(ownPos):
-	match pushDirection:
-		PushDirection.LEFT:
-			ownPos += Vector2(-64, 0)
-		PushDirection.RIGHT:
-			ownPos += Vector2(64, 0)
-		PushDirection.UP:
-			ownPos += Vector2(0, -32)
-		_:
-			ownPos += Vector2(0, 32)
-	return ownPos
-
-
-func nextTile():
-	var color = randi()%3
-	var power = randi()%2
-	$platform/tile.setup(color, power)
-
-
-func getNextTile(step):
-	var dbPosition = Vector2(0, 0)
-	var node = null
-	
-	match pushDirection:
-		PushDirection.LEFT:
-			dbPosition = Vector2(firstBlock.x - step, firstBlock.y)
-		PushDirection.RIGHT:
-			dbPosition = Vector2(firstBlock.x + step, firstBlock.y)
-		PushDirection.UP:
-			dbPosition = Vector2(firstBlock.x, firstBlock.y - step)
-		_:
-			dbPosition = Vector2(firstBlock.x, firstBlock.y + step)
-	
-	node = board[dbPosition.y][dbPosition.x]
-	return {"node": node, "db": dbPosition}
-
-
-func updateTurns(reset = false):
-	if reset:
-		turnsLeft = 5 + 1
-	turnsLeft -= 1
-	$turnLabel.set_text("Turns Left: " + str(turnsLeft))
-	
-	if turnsLeft == 0:
-		performAttack()
-
-
-func worldToMap(pos):
-	var vector = (Vector2(int(pos.x), int(pos.y)) - Vector2(164, 96)) / Vector2(64, 32)
-	var coords = Vector2(int(vector.x), int(vector.y))
-	
-	# Extend boundaries
-	if vector.x < 0:
-		coords.x = -1
-	if vector.y < 0:
-		coords.y = -1
-	
-	return coords
-
-
-func checkValidPosition(coords):
+func inputCheckBuildPosition(coords):
 	var valid = false
 
 	if coords.x == -1 and coords.y >= 0 and coords.y < 5:
@@ -182,15 +140,51 @@ func checkValidPosition(coords):
 	return valid
 
 
-func _on_Button_button_up():
-	Global.fullscreen()
+func dbGetNextTile(step):
+	var dbPosition = Vector2(0, 0)
+	var node = null
+	
+	match pushDirection:
+		PushDirection.LEFT:
+			dbPosition = Vector2(firstBlock.x - step, firstBlock.y)
+		PushDirection.RIGHT:
+			dbPosition = Vector2(firstBlock.x + step, firstBlock.y)
+		PushDirection.UP:
+			dbPosition = Vector2(firstBlock.x, firstBlock.y - step)
+		_:
+			dbPosition = Vector2(firstBlock.x, firstBlock.y + step)
+	
+	node = board[dbPosition.y][dbPosition.x]
+	return {"node": node, "db": dbPosition}
 
 
-func _on_clickDelay_timeout():
-	clickReady = true
+func worldToMap(pos):
+	var vector = (Vector2(int(pos.x), int(pos.y)) - Vector2(164, 96)) / Vector2(64, 32)
+	var coords = Vector2(int(vector.x), int(vector.y))
+	
+	# Extend boundaries
+	if vector.x < 0:
+		coords.x = -1
+	if vector.y < 0:
+		coords.y = -1
+	
+	return coords
 
 
-func populate():
+func getOffGridPosition(ownPos):
+	match pushDirection:
+		PushDirection.LEFT:
+			ownPos += Vector2(-64, 0)
+		PushDirection.RIGHT:
+			ownPos += Vector2(64, 0)
+		PushDirection.UP:
+			ownPos += Vector2(0, -32)
+		_:
+			ownPos += Vector2(0, 32)
+	return ownPos
+
+
+func populateBoard():
 	for y in range(0, 5):
 		var row = []
 		for x in range(0, 5):
@@ -204,3 +198,13 @@ func populate():
 		board.append(row)
 	
 	print(board)
+
+
+func _on_Button_button_up():
+	Global.fullscreen()
+
+
+func _on_clickDelay_timeout():
+	clickReady = true
+
+
