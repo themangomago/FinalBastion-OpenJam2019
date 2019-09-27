@@ -16,7 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="FinalBastion"
-run/main_scene="res://scenes/gameManager.tscn"
+run/main_scene="res://scenes/gm/gameManager.tscn"
 config/icon="res://icon.png"
 
 [autoload]
