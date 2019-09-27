@@ -20,12 +20,24 @@ var pushRow = -1
 # Game States
 var board = []
 var turnsLeft = 5
+var attackLane = 0
+var attackStrength = 6
 
 
 func _ready():
 	randomize()
 	populate()
 	nextTile()
+	updateAttack()
+
+
+func updateAttack():
+	attackLane = randi()%5
+	attackStrength += 2
+	$attackIndicator.setStrength(attackStrength)
+	$attackIndicator.position = Vector2(164, 32) + Vector2(64 * attackLane, 0)
+	updateTurns(true)
+	
 
 func performAttack():
 	pass
@@ -40,7 +52,7 @@ func _input(event):
 		validMousePosition = checkValidPosition(coords)
 
 		if validMousePosition:
-			$tile.position = Vector2(64, 32) * coords + bp
+			$platform/tile.position = Vector2(64, 32) * coords + bp
 
 func processClick():
 	if validMousePosition and clickReady:
@@ -49,9 +61,8 @@ func processClick():
 		var mergeableFound = -1
 		var nextTile
 		var curTile = tileNode.instance()
-		curTile.setup($tile.color, $tile.power - 1)
-		#curTile.position = Vector2(0,0)
-		curTile.position = $tile.position
+		curTile.setup($platform/tile.color, $platform/tile.power - 1)
+		curTile.position = $platform/tile.position
 		$platform/tiles.add_child(curTile)
 
 		for step in range(0, 5):
@@ -63,32 +74,27 @@ func processClick():
 				nextTile.node.power == curTile.power:
 				nextTile.node.upgrade()
 				mergeableFound = step
-				#$platform/tiles.remove_child(curTile)
-				#curTile.queue_free()
 				curTile.move(nextTile.node.position, Global.TileAfterLife.Die)
 				break
 
 			# Remove Current from DB
 			board[nextTile.db.y][nextTile.db.x] = curTile
-			#curTile.position = nextTile.node.position
 			curTile.move(nextTile.node.position)
 
 			curTile = nextTile.node
 
 		if mergeableFound == -1:
-			#$platform/tiles.remove_child(curTile)
-			#curTile.queue_free()
 			#print("not found")
 			curTile.move(getOffGridPosition(curTile.position), Global.TileAfterLife.Explode)
-		else:
+		#else:
 			#print("found @ pos: " + str(mergeableFound))
-			pass
 
 		nextTile()
 		updateTurns()
-		print("Board:")
-		print(board)
-		print("Childs: "+ str($platform/tiles.get_child_count()))
+#		print("Board:")
+#		print(board)
+#		print("Childs: "+ str($platform/tiles.get_child_count()))
+
 
 func getOffGridPosition(ownPos):
 	match pushDirection:
@@ -102,13 +108,12 @@ func getOffGridPosition(ownPos):
 			ownPos += Vector2(0, 32)
 	return ownPos
 
+
 func nextTile():
 	var color = randi()%3
 	var power = randi()%2
-	$tile.setup(color, power)
+	$platform/tile.setup(color, power)
 
-
-	
 
 func getNextTile(step):
 	var dbPosition = Vector2(0, 0)
@@ -127,6 +132,7 @@ func getNextTile(step):
 	node = board[dbPosition.y][dbPosition.x]
 	return {"node": node, "db": dbPosition}
 
+
 func updateTurns(reset = false):
 	if reset:
 		turnsLeft = 5 + 1
@@ -135,6 +141,7 @@ func updateTurns(reset = false):
 	
 	if turnsLeft == 0:
 		performAttack()
+
 
 func worldToMap(pos):
 	var vector = (Vector2(int(pos.x), int(pos.y)) - Vector2(164, 96)) / Vector2(64, 32)

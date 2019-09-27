@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/platform.png-50e3f30f3ba878b3ce7b7b093645468e.stex"
+path="res://.import/open-jam-logo-tagline-no-bg.png-e82b2df8e7c64fd646b07b3401945b07.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/platform/platform.png"
-dest_files=[ "res://.import/platform.png-50e3f30f3ba878b3ce7b7b093645468e.stex" ]
+source_file="res://assets/gfx/open-jam-logo-tagline-no-bg.png"
+dest_files=[ "res://.import/open-jam-logo-tagline-no-bg.png-e82b2df8e7c64fd646b07b3401945b07.stex" ]
 
 [params]
 
