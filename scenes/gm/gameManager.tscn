@@ -41,5 +41,11 @@ margin_top = 333.133
 margin_right = 634.308
 margin_bottom = 353.133
 text = "Fullscreen"
+
+[node name="turnLabel" type="Label" parent="."]
+margin_left = 262.786
+margin_top = 6.8256
+margin_right = 302.786
+margin_bottom = 20.8256
 [connection signal="timeout" from="clickDelay" to="." method="_on_clickDelay_timeout"]
 [connection signal="button_up" from="Button" to="." method="_on_Button_button_up"]

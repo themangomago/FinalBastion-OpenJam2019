@@ -11,18 +11,24 @@ onready var tileNode = preload("res://scenes/elements/tile.tscn")
 
 # Mouse Stuff
 var validMousePosition = false
+var clickReady = true
+
 var pushDirection = PushDirection.LEFT
 var firstBlock = Vector2(0,0)
 var pushRow = -1
 
 # Game States
 var board = []
+var turnsLeft = 5
 
 
 func _ready():
 	randomize()
 	populate()
+	nextTile()
 
+func performAttack():
+	pass
 
 func _input(event):
 	if event is InputEventMouseButton:
@@ -37,8 +43,98 @@ func _input(event):
 			$tile.position = Vector2(64, 32) * coords + bp
 
 func processClick():
-	print("click")
+	if validMousePosition and clickReady:
+		clickReady = false
+		$clickDelay.start()
+		var mergeableFound = -1
+		var nextTile
+		var curTile = tileNode.instance()
+		curTile.setup($tile.color, $tile.power - 1)
+		#curTile.position = Vector2(0,0)
+		curTile.position = $tile.position
+		$platform/tiles.add_child(curTile)
 
+		for step in range(0, 5):
+			nextTile = getNextTile(step)
+			#print(nextTile)
+			
+			# Look for mergeables
+			if nextTile.node.color == curTile.color and \
+				nextTile.node.power == curTile.power:
+				nextTile.node.upgrade()
+				mergeableFound = step
+				#$platform/tiles.remove_child(curTile)
+				#curTile.queue_free()
+				curTile.move(nextTile.node.position, Global.TileAfterLife.Die)
+				break
+
+			# Remove Current from DB
+			board[nextTile.db.y][nextTile.db.x] = curTile
+			#curTile.position = nextTile.node.position
+			curTile.move(nextTile.node.position)
+
+			curTile = nextTile.node
+
+		if mergeableFound == -1:
+			#$platform/tiles.remove_child(curTile)
+			#curTile.queue_free()
+			#print("not found")
+			curTile.move(getOffGridPosition(curTile.position), Global.TileAfterLife.Explode)
+		else:
+			#print("found @ pos: " + str(mergeableFound))
+			pass
+
+		nextTile()
+		updateTurns()
+		print("Board:")
+		print(board)
+		print("Childs: "+ str($platform/tiles.get_child_count()))
+
+func getOffGridPosition(ownPos):
+	match pushDirection:
+		PushDirection.LEFT:
+			ownPos += Vector2(-64, 0)
+		PushDirection.RIGHT:
+			ownPos += Vector2(64, 0)
+		PushDirection.UP:
+			ownPos += Vector2(0, -32)
+		_:
+			ownPos += Vector2(0, 32)
+	return ownPos
+
+func nextTile():
+	var color = randi()%3
+	var power = randi()%2
+	$tile.setup(color, power)
+
+
+	
+
+func getNextTile(step):
+	var dbPosition = Vector2(0, 0)
+	var node = null
+	
+	match pushDirection:
+		PushDirection.LEFT:
+			dbPosition = Vector2(firstBlock.x - step, firstBlock.y)
+		PushDirection.RIGHT:
+			dbPosition = Vector2(firstBlock.x + step, firstBlock.y)
+		PushDirection.UP:
+			dbPosition = Vector2(firstBlock.x, firstBlock.y - step)
+		_:
+			dbPosition = Vector2(firstBlock.x, firstBlock.y + step)
+	
+	node = board[dbPosition.y][dbPosition.x]
+	return {"node": node, "db": dbPosition}
+
+func updateTurns(reset = false):
+	if reset:
+		turnsLeft = 5 + 1
+	turnsLeft -= 1
+	$turnLabel.set_text("Turns Left: " + str(turnsLeft))
+	
+	if turnsLeft == 0:
+		performAttack()
 
 func worldToMap(pos):
 	var vector = (Vector2(int(pos.x), int(pos.y)) - Vector2(164, 96)) / Vector2(64, 32)
@@ -84,7 +180,7 @@ func _on_Button_button_up():
 
 
 func _on_clickDelay_timeout():
-	pass # Replace with function body.
+	clickReady = true
 
 
 func populate():
