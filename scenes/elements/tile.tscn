@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scripts/elements/tile.gd" type="Script" id=1]
-[ext_resource path="res://assets/gfx/turrets/tile.png" type="Texture" id=2]
+[ext_resource path="res://assets/gfx/turrets/turrets.png" type="Texture" id=2]
 [ext_resource path="res://assets/fonts/mago3.2.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://assets/gfx/turrets/explosion.png" type="Texture" id=4]
 
@@ -32,12 +32,7 @@ script = ExtResource( 1 )
 position = Vector2( 0, -16 )
 texture = ExtResource( 2 )
 centered = false
-
-[node name="ColorRect" type="ColorRect" parent="."]
-margin_left = 23.4533
-margin_top = 5.53393
-margin_right = 39.4533
-margin_bottom = 21.5339
+hframes = 4
 
 [node name="Label" type="Label" parent="."]
 margin_left = 3.0
@@ -46,6 +41,8 @@ margin_right = 61.0
 margin_bottom = 31.0
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0.635294, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 0
 text = "Level 0"
 align = 1
 

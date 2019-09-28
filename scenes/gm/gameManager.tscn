@@ -1,11 +1,13 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://scripts/gm/gameManager.gd" type="Script" id=1]
 [ext_resource path="res://assets/gfx/background.png" type="Texture" id=2]
-[ext_resource path="res://assets/gfx/platform/platform.png" type="Texture" id=3]
-[ext_resource path="res://scenes/elements/tile.tscn" type="PackedScene" id=4]
-[ext_resource path="res://scenes/ui/attackIndicator.tscn" type="PackedScene" id=5]
-[ext_resource path="res://scenes/ui/hud.tscn" type="PackedScene" id=6]
+[ext_resource path="res://assets/fonts/font31.tres" type="DynamicFont" id=3]
+[ext_resource path="res://assets/gfx/ui/nextTile.png" type="Texture" id=4]
+[ext_resource path="res://scenes/elements/tile.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/gfx/platform/platform.png" type="Texture" id=6]
+[ext_resource path="res://scenes/ui/attackIndicator.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/ui/hud.tscn" type="PackedScene" id=8]
 
 [sub_resource type="Animation" id=1]
 resource_name = "idle"
@@ -50,24 +52,34 @@ texture = ExtResource( 2 )
 centered = false
 
 [node name="mouse" type="Label" parent="."]
-margin_left = 11.0
-margin_top = 271.0
-margin_right = 51.0
-margin_bottom = 285.0
+margin_left = 5.11929
+margin_top = 145.3
+margin_right = 45.1193
+margin_bottom = 159.3
+custom_fonts/font = ExtResource( 3 )
 
 [node name="debug" type="Label" parent="."]
-margin_left = 12.3268
-margin_top = 294.883
-margin_right = 52.3268
-margin_bottom = 308.883
+margin_left = 7.18117
+margin_top = 193.441
+margin_right = 47.1812
+margin_bottom = 207.441
+custom_fonts/font = ExtResource( 3 )
+
+[node name="nextTileBg" type="Sprite" parent="."]
+position = Vector2( 0, 296 )
+texture = ExtResource( 4 )
+centered = false
+
+[node name="tileNext" parent="nextTileBg" instance=ExtResource( 5 )]
+position = Vector2( 2, 29 )
 
 [node name="platform" type="Sprite" parent="."]
 position = Vector2( 0, 4 )
-texture = ExtResource( 3 )
+texture = ExtResource( 6 )
 centered = false
 offset = Vector2( 160, 96 )
 
-[node name="tile" parent="platform" instance=ExtResource( 4 )]
+[node name="tile" parent="platform" instance=ExtResource( 5 )]
 position = Vector2( -68, -4 )
 
 [node name="tiles" type="YSort" parent="platform"]
@@ -77,9 +89,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0.788235, 0.188235, 0.219608, 0 )
 
-[node name="attackIndicator" parent="." instance=ExtResource( 5 )]
+[node name="attackIndicator" parent="." instance=ExtResource( 7 )]
 
-[node name="hud" parent="." instance=ExtResource( 6 )]
+[node name="hud" parent="." instance=ExtResource( 8 )]
 
 [node name="clickDelay" type="Timer" parent="."]
 wait_time = 0.75

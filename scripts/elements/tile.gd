@@ -8,14 +8,7 @@ var myAfterLife = Global.TileAfterLife.Nothing
 func setup(tcolor, tpower, endPosition = null):
 	color = tcolor
 
-	match color:
-		0:
-			$ColorRect.modulate = Color(128, 0 , 0 )
-		1:
-			$ColorRect.modulate = Color(0, 128 , 0 )
-		2:
-			$ColorRect.modulate = Color(0, 0 , 128 )
-			
+	$Sprite.frame = color
 	power = tpower + 1
 	$Label.set_text("Level " + str(power))
 	if endPosition:
