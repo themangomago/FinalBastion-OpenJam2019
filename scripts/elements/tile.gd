@@ -17,6 +17,7 @@ func setup(tcolor, tpower, endPosition = null):
 func upgrade():
 	power *= 2
 	$Label.set_text("Level " + str(power))
+	$upgradeAudio.play()
 
 func move(to, afterLife = Global.TileAfterLife.Nothing):
 	$Tween.interpolate_property(self, "position", position, to, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)

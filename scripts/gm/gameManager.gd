@@ -8,6 +8,7 @@ const bp = Vector2(164, 96)
 
 # Preloads
 onready var tileNode = preload("res://scenes/elements/tile.tscn")
+onready var explosionNode = preload("res://scenes/elements/explosion.tscn")
 
 # Mouse Stuff
 var validMousePosition = false
@@ -22,7 +23,13 @@ var board = []
 var turnsLeft = 5
 var attackLane = 0
 var attackStrength = 8
+var myNextTile = {"color": 0, "power": 0}
 
+var offset = 0
+
+func _process(delta):
+	offset += 150 * delta
+	$meteoroid.scroll_offset = Vector2(offset, offset)
 
 func _ready():
 	randomize()
@@ -66,8 +73,21 @@ func performAttack():
 	getNewTarget()
 	
 	if lifes > 0:
+		# Earth is being hit
 		$hud.killHumans(max(lifes, 0))
 		$playerHitAnimation.play("hit")
+		var instance = explosionNode.instance()
+		# Random location for explosion
+		match randi() % 3:
+			0:
+				instance.position = Vector2(104, 320)
+			1:
+				instance.position = Vector2(340, 320)
+			_:
+				instance.position = Vector2(496, 320)
+		
+		self.add_child(instance)
+		
 	$hud.saveHumans()
 	
 	# Let user do stuff
@@ -79,9 +99,11 @@ func thisIsTheEndTrigger():
 
 
 func nextTile():
-	var color = randi()%3
-	var power = randi()%2
-	$platform/tile.setup(color, power)
+	$platform/tile.setup(myNextTile.color, myNextTile.power)
+	myNextTile.color = randi()%3
+	myNextTile.power = randi()%2
+	$nextTileBg/tileNext.setup(myNextTile.color, myNextTile.power)
+	
 
 
 func turnUpdate(reset = false):

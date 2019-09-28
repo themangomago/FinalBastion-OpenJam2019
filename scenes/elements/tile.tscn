@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scripts/elements/tile.gd" type="Script" id=1]
 [ext_resource path="res://assets/gfx/turrets/turrets.png" type="Texture" id=2]
 [ext_resource path="res://assets/fonts/mago3.2.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://assets/gfx/turrets/explosion.png" type="Texture" id=4]
+[ext_resource path="res://assets/sfx/explode.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sfx/upgrade.wav" type="AudioStream" id=6]
 
 [sub_resource type="DynamicFont" id=1]
 outline_color = Color( 0.0784314, 0.0588235, 0.137255, 1 )
@@ -23,6 +25,18 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 1,
 "values": [ 1, 2, 3, 4, 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("explosionAudio:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
 [node name="tile" type="Node2D"]
@@ -57,5 +71,12 @@ hframes = 5
 
 [node name="animation" type="AnimationPlayer" parent="."]
 anims/explode = SubResource( 2 )
+
+[node name="explosionAudio" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 5 )
+
+[node name="upgradeAudio" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 6 )
+volume_db = -10.0
 [connection signal="tween_completed" from="Tween" to="." method="_on_Tween_tween_completed"]
 [connection signal="animation_finished" from="animation" to="." method="_on_animation_animation_finished"]
