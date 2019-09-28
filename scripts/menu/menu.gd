@@ -4,6 +4,8 @@ var tutorialCompleted = false
 
 
 func _ready():
+	$version.set_text(Global.version)
+	
 	if Global.config.tutorialCompleted:
 		$newBtn.disabled = false
 		$newBtn/RichTextLabel.bbcode_text = "[center]Start A New Game[/center]"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://scripts/gm/gameManager.gd" type="Script" id=1]
 [ext_resource path="res://assets/gfx/meteoroid.png" type="Texture" id=2]
@@ -10,14 +10,16 @@
 [ext_resource path="res://assets/gfx/platform/platform.png" type="Texture" id=8]
 [ext_resource path="res://scenes/ui/attackIndicator.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/ui/hud.tscn" type="PackedScene" id=10]
-[ext_resource path="res://scripts/menu/menu.gd" type="Script" id=11]
-[ext_resource path="res://assets/gfx/menu/title.png" type="Texture" id=12]
-[ext_resource path="res://assets/gfx/menu/ship.png" type="Texture" id=13]
-[ext_resource path="res://assets/gfx/menu/activeButton.png" type="Texture" id=14]
-[ext_resource path="res://assets/gfx/menu/hoverButton.png" type="Texture" id=15]
-[ext_resource path="res://assets/gfx/menu/inactiveButton.png" type="Texture" id=16]
-[ext_resource path="res://assets/gfx/ui/fullscreen.png" type="Texture" id=17]
-[ext_resource path="res://assets/music/music.ogg" type="AudioStream" id=18]
+[ext_resource path="res://assets/gfx/ui/leave.png" type="Texture" id=11]
+[ext_resource path="res://assets/gfx/ui/reset.png" type="Texture" id=12]
+[ext_resource path="res://scripts/menu/menu.gd" type="Script" id=13]
+[ext_resource path="res://assets/gfx/menu/title.png" type="Texture" id=14]
+[ext_resource path="res://assets/gfx/menu/ship.png" type="Texture" id=15]
+[ext_resource path="res://assets/gfx/menu/activeButton.png" type="Texture" id=16]
+[ext_resource path="res://assets/gfx/menu/hoverButton.png" type="Texture" id=17]
+[ext_resource path="res://assets/gfx/menu/inactiveButton.png" type="Texture" id=18]
+[ext_resource path="res://assets/gfx/ui/fullscreen.png" type="Texture" id=19]
+[ext_resource path="res://assets/music/music.ogg" type="AudioStream" id=20]
 
 [sub_resource type="Animation" id=1]
 resource_name = "idle"
@@ -137,7 +139,6 @@ centered = false
 position = Vector2( 2, 29 )
 
 [node name="platform" type="Sprite" parent="game"]
-editor/display_folded = true
 texture = ExtResource( 8 )
 centered = false
 offset = Vector2( 160, 96 )
@@ -157,18 +158,32 @@ color = Color( 0.788235, 0.188235, 0.219608, 0 )
 
 [node name="hud" parent="game" instance=ExtResource( 10 )]
 
+[node name="menu" type="TextureButton" parent="game"]
+margin_left = 572.0
+margin_top = 323.0
+margin_right = 636.0
+margin_bottom = 339.0
+texture_normal = ExtResource( 11 )
+
+[node name="reset" type="TextureButton" parent="game"]
+margin_left = 572.0
+margin_top = 305.0
+margin_right = 636.0
+margin_bottom = 321.0
+texture_normal = ExtResource( 12 )
+
 [node name="menu" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource( 11 )
+script = ExtResource( 13 )
 
 [node name="title" type="Sprite" parent="menu"]
-texture = ExtResource( 12 )
+texture = ExtResource( 14 )
 centered = false
 
 [node name="ship" type="Sprite" parent="menu"]
 position = Vector2( 172, 288 )
-texture = ExtResource( 13 )
+texture = ExtResource( 15 )
 
 [node name="tutorialBtn" type="TextureButton" parent="menu"]
 editor/display_folded = true
@@ -178,9 +193,9 @@ margin_left = -80.0
 margin_top = 96.0
 margin_right = 80.0
 margin_bottom = 128.0
-texture_normal = ExtResource( 14 )
-texture_hover = ExtResource( 15 )
-texture_disabled = ExtResource( 16 )
+texture_normal = ExtResource( 16 )
+texture_hover = ExtResource( 17 )
+texture_disabled = ExtResource( 18 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="menu/tutorialBtn"]
 anchor_right = 1.0
@@ -201,9 +216,9 @@ margin_top = 144.0
 margin_right = 80.0
 margin_bottom = 176.0
 disabled = true
-texture_normal = ExtResource( 14 )
-texture_hover = ExtResource( 15 )
-texture_disabled = ExtResource( 16 )
+texture_normal = ExtResource( 16 )
+texture_hover = ExtResource( 17 )
+texture_disabled = ExtResource( 18 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="menu/newBtn"]
 anchor_right = 1.0
@@ -224,9 +239,9 @@ margin_left = -80.0
 margin_top = 208.0
 margin_right = 80.0
 margin_bottom = 240.0
-texture_normal = ExtResource( 14 )
-texture_hover = ExtResource( 15 )
-texture_disabled = ExtResource( 16 )
+texture_normal = ExtResource( 16 )
+texture_hover = ExtResource( 17 )
+texture_disabled = ExtResource( 18 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="menu/quitBtn"]
 anchor_right = 1.0
@@ -245,8 +260,17 @@ anchor_bottom = 1.0
 margin_top = -16.0
 custom_fonts/normal_font = ExtResource( 4 )
 bbcode_enabled = true
-bbcode_text = "[center]© 2019 mago [color=#0099db]`[/color]magodevel [color=#ff0044]¥[/color]magodev[/center]"
-text = "© 2019 mago `magodevel ¥magodev"
+bbcode_text = "[center]2019 by mago [color=#0099db]`[/color]magodevel [color=#ff0044]¥[/color]magodev[/center]"
+text = "2019 by mago `magodevel ¥magodev"
+
+[node name="version" type="Label" parent="menu"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -64.0
+margin_right = -4.0
+custom_fonts/font = ExtResource( 4 )
+text = "Version"
+align = 2
 
 [node name="clickDelay" type="Timer" parent="."]
 wait_time = 0.75
@@ -261,7 +285,7 @@ margin_left = 572.0
 margin_top = 341.0
 margin_right = 636.0
 margin_bottom = 357.0
-texture_normal = ExtResource( 17 )
+texture_normal = ExtResource( 19 )
 
 [node name="platformAnimation" type="AnimationPlayer" parent="."]
 autoplay = "idle"
@@ -275,8 +299,10 @@ anims/fly = SubResource( 3 )
 
 [node name="musicPlayer" type="AudioStreamPlayer2D" parent="."]
 position = Vector2( 320, 170 )
-stream = ExtResource( 18 )
+stream = ExtResource( 20 )
 bus = "music"
+[connection signal="button_up" from="game/menu" to="." method="_on_menu_button_up"]
+[connection signal="button_up" from="game/reset" to="." method="_on_reset_button_up"]
 [connection signal="button_up" from="menu/tutorialBtn" to="menu" method="_on_tutorialBtn_button_up"]
 [connection signal="button_up" from="menu/newBtn" to="menu" method="_on_newBtn_button_up"]
 [connection signal="button_up" from="menu/quitBtn" to="menu" method="_on_quitBtn_button_up"]

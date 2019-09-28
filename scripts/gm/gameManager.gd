@@ -5,6 +5,7 @@ enum PushDirection {LEFT, RIGHT, DOWN, UP}
 
 # Consts
 const bp = Vector2(164, 96)
+const startStrength = 6
 
 # Preloads
 onready var tileNode = preload("res://scenes/elements/tile.tscn")
@@ -33,11 +34,25 @@ func _process(delta):
 	$meteoroid.scroll_offset = Vector2(offset, offset)
 
 func _ready():
+	resetGame()
+
+func resetGame():
+	# Remove all Tiles
+	for node in $game/platform/tiles.get_children():
+		$game/platform/tiles.remove_child(node)
+		node.queue_free()
+	# Reset Board
+	board = []
+	# Reset Strength
+	attackStrength = startStrength
+	# Reset HUD
+	$game/hud.init()
+	
+	# Init
 	randomize()
 	populateBoard()
 	nextTile()
 	getNewTarget()
-
 
 func changeGameState(to):
 	match to:
@@ -289,3 +304,12 @@ func _on_clickDelay_timeout():
 
 func _on_fullscreen_button_up():
 	Global.fullscreen()
+
+
+func _on_reset_button_up():
+	resetGame()
+
+
+func _on_menu_button_up():
+	resetGame()
+	changeGameState(Global.GameState.Menu)
