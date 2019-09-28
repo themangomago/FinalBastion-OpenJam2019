@@ -1,21 +1,26 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://scripts/gm/gameManager.gd" type="Script" id=1]
 [ext_resource path="res://assets/gfx/meteoroid.png" type="Texture" id=2]
 [ext_resource path="res://assets/gfx/background.png" type="Texture" id=3]
 [ext_resource path="res://assets/fonts/font31.tres" type="DynamicFont" id=4]
-[ext_resource path="res://assets/gfx/ui/nextTile.png" type="Texture" id=5]
-[ext_resource path="res://scenes/elements/tile.tscn" type="PackedScene" id=6]
-[ext_resource path="res://assets/gfx/platform/platform.png" type="Texture" id=7]
-[ext_resource path="res://scenes/ui/attackIndicator.tscn" type="PackedScene" id=8]
-[ext_resource path="res://scenes/ui/hud.tscn" type="PackedScene" id=9]
+[ext_resource path="res://assets/gfx/shipsmall.png" type="Texture" id=5]
+[ext_resource path="res://assets/gfx/ui/nextTile.png" type="Texture" id=6]
+[ext_resource path="res://scenes/elements/tile.tscn" type="PackedScene" id=7]
+[ext_resource path="res://assets/gfx/platform/platform.png" type="Texture" id=8]
+[ext_resource path="res://scenes/ui/attackIndicator.tscn" type="PackedScene" id=9]
+[ext_resource path="res://scenes/ui/hud.tscn" type="PackedScene" id=10]
+[ext_resource path="res://scripts/menu/menu.gd" type="Script" id=11]
+[ext_resource path="res://assets/gfx/menu/title.png" type="Texture" id=12]
+[ext_resource path="res://assets/gfx/menu/ship.png" type="Texture" id=13]
+[ext_resource path="res://assets/music/music.ogg" type="AudioStream" id=14]
 
 [sub_resource type="Animation" id=1]
 resource_name = "idle"
 length = 3.0
 loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath("platform:position")
+tracks/0/path = NodePath("game/platform:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -27,7 +32,7 @@ tracks/0/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( 0, 4 ), Vector2( 0, 0 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("platform:frame")
+tracks/1/path = NodePath("game/platform:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -43,7 +48,7 @@ tracks/1/keys = {
 resource_name = "hit"
 length = 0.2
 tracks/0/type = "value"
-tracks/0/path = NodePath("alarmOverlay:color")
+tracks/0/path = NodePath("game/alarmOverlay:color")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -55,10 +60,29 @@ tracks/0/keys = {
 "values": [ Color( 0.788235, 0.188235, 0.219608, 0 ), Color( 0.788235, 0.188235, 0.219608, 0.25098 ), Color( 0.788235, 0.188235, 0.219608, 0 ) ]
 }
 
+[sub_resource type="Animation" id=3]
+resource_name = "fly"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/path = NodePath("game/ship:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.7 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 550, 410 ), Vector2( 550, -50 ) ]
+}
+
 [node name="gameManager" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="meteoroid" type="ParallaxBackground" parent="."]
 editor/display_folded = true
@@ -90,35 +114,61 @@ margin_right = 47.1812
 margin_bottom = 207.441
 custom_fonts/font = ExtResource( 4 )
 
-[node name="nextTileBg" type="Sprite" parent="."]
+[node name="game" type="Control" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ship" type="Sprite" parent="game"]
+position = Vector2( 550, 410 )
+texture = ExtResource( 5 )
+
+[node name="nextTileBg" type="Sprite" parent="game"]
 editor/display_folded = true
 position = Vector2( 0, 296 )
-texture = ExtResource( 5 )
+texture = ExtResource( 6 )
 centered = false
 
-[node name="tileNext" parent="nextTileBg" instance=ExtResource( 6 )]
+[node name="tileNext" parent="game/nextTileBg" instance=ExtResource( 7 )]
 position = Vector2( 2, 29 )
 
-[node name="platform" type="Sprite" parent="."]
+[node name="platform" type="Sprite" parent="game"]
 editor/display_folded = true
-texture = ExtResource( 7 )
+texture = ExtResource( 8 )
 centered = false
 offset = Vector2( 160, 96 )
 hframes = 2
 
-[node name="tile" parent="platform" instance=ExtResource( 6 )]
+[node name="tile" parent="game/platform" instance=ExtResource( 7 )]
 position = Vector2( -68, -4 )
 
-[node name="tiles" type="YSort" parent="platform"]
+[node name="tiles" type="YSort" parent="game/platform"]
 
-[node name="alarmOverlay" type="ColorRect" parent="."]
+[node name="alarmOverlay" type="ColorRect" parent="game"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0.788235, 0.188235, 0.219608, 0 )
 
-[node name="attackIndicator" parent="." instance=ExtResource( 8 )]
+[node name="attackIndicator" parent="game" instance=ExtResource( 9 )]
 
-[node name="hud" parent="." instance=ExtResource( 9 )]
+[node name="hud" parent="game" instance=ExtResource( 10 )]
+
+[node name="menu" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 11 )
+
+[node name="title" type="Sprite" parent="menu"]
+texture = ExtResource( 12 )
+centered = false
+
+[node name="ship" type="Sprite" parent="menu"]
+position = Vector2( 172, 288 )
+texture = ExtResource( 13 )
+
+[node name="NinePatchRect" type="NinePatchRect" parent="menu"]
+margin_right = 40.0
+margin_bottom = 40.0
 
 [node name="clickDelay" type="Timer" parent="."]
 wait_time = 0.75
@@ -141,5 +191,13 @@ anims/idle = SubResource( 1 )
 
 [node name="playerHitAnimation" type="AnimationPlayer" parent="."]
 anims/hit = SubResource( 2 )
+
+[node name="shipAnimation" type="AnimationPlayer" parent="."]
+anims/fly = SubResource( 3 )
+
+[node name="musicPlayer" type="AudioStreamPlayer2D" parent="."]
+position = Vector2( 320, 170 )
+stream = ExtResource( 14 )
+bus = "music"
 [connection signal="timeout" from="clickDelay" to="." method="_on_clickDelay_timeout"]
 [connection signal="button_up" from="Button" to="." method="_on_Button_button_up"]

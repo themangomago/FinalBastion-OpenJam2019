@@ -37,7 +37,7 @@ func saveHumans():
 
 func checkConditions():
 	if $savedHumans.value >= $totalHumans.value:
-		get_parent().thisIsTheEndTrigger()
+		get_parent().get_parent().thisIsTheEndTrigger()
 
 func percentage():
 	var text = "Saved " + str($savedHumans.value) + "% / " + str($totalHumans.value) + "%"

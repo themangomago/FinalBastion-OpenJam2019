@@ -22,7 +22,7 @@ var pushRow = -1
 var board = []
 var turnsLeft = 5
 var attackLane = 0
-var attackStrength = 8
+var attackStrength = 6
 var myNextTile = {"color": 0, "power": 0}
 
 var offset = 0
@@ -41,8 +41,8 @@ func _ready():
 func getNewTarget():
 	attackLane = randi() % 5
 	attackStrength += 2
-	$attackIndicator.setStrength(attackStrength)
-	$attackIndicator.position = Vector2(164, 32) + Vector2(64 * attackLane, 0)
+	$game/attackIndicator.setStrength(attackStrength)
+	$game/attackIndicator.position = Vector2(164, 32) + Vector2(64 * attackLane, 0)
 	turnUpdate(true)
 
 
@@ -68,13 +68,13 @@ func performAttack():
 			# Quit loop
 			lifes -= node.power
 			break
-		$attackIndicator.setStrength(lifes)
+		$game/attackIndicator.setStrength(lifes)
 		yield($attackDelay, "timeout")
 	getNewTarget()
 	
 	if lifes > 0:
 		# Earth is being hit
-		$hud.killHumans(max(lifes, 0))
+		$game/hud.killHumans(max(lifes, 0))
 		$playerHitAnimation.play("hit")
 		var instance = explosionNode.instance()
 		# Random location for explosion
@@ -88,8 +88,8 @@ func performAttack():
 		
 		self.add_child(instance)
 		
-	$hud.saveHumans()
-	
+	$game/hud.saveHumans()
+	$shipAnimation.play("fly")
 	# Let user do stuff
 	clickReady = true
 
@@ -99,10 +99,10 @@ func thisIsTheEndTrigger():
 
 
 func nextTile():
-	$platform/tile.setup(myNextTile.color, myNextTile.power)
+	$game/platform/tile.setup(myNextTile.color, myNextTile.power)
 	myNextTile.color = randi()%3
 	myNextTile.power = randi()%2
-	$nextTileBg/tileNext.setup(myNextTile.color, myNextTile.power)
+	$game/nextTileBg/tileNext.setup(myNextTile.color, myNextTile.power)
 	
 
 
@@ -110,9 +110,9 @@ func turnUpdate(reset = false):
 	if reset:
 		turnsLeft = 5 + 1
 	turnsLeft -= 1
-	$hud.updateTurns(turnsLeft)
+	$game/hud.updateTurns(turnsLeft)
 	
-	$attackIndicator.setTurn(turnsLeft)
+	$game/attackIndicator.setTurn(turnsLeft)
 	
 	if turnsLeft == 0:
 		performAttack()
@@ -128,7 +128,7 @@ func _input(event):
 		validMousePosition = inputCheckBuildPosition(coords)
 
 		if validMousePosition:
-			$platform/tile.position = Vector2(64, 32) * coords + bp
+			$game/platform/tile.position = Vector2(64, 32) * coords + bp
 
 
 func inputProcessClick():
@@ -138,9 +138,9 @@ func inputProcessClick():
 		var mergeableFound = -1
 		var nextTile
 		var curTile = tileNode.instance()
-		curTile.setup($platform/tile.color, $platform/tile.power - 1)
-		curTile.position = $platform/tile.position
-		$platform/tiles.add_child(curTile)
+		curTile.setup($game/platform/tile.color, $game/platform/tile.power - 1)
+		curTile.position = $game/platform/tile.position
+		$game/platform/tiles.add_child(curTile)
 
 		for step in range(0, 5):
 			nextTile = dbGetNextTile(step)
@@ -264,7 +264,7 @@ func spawnNewTile(pos):
 
 	instance.setup(color, power)
 	instance.position = bp + Vector2(pos.x, pos.y) * scaler
-	$platform/tiles.add_child(instance)
+	$game/platform/tiles.add_child(instance)
 	return instance
 
 func _on_Button_button_up():
