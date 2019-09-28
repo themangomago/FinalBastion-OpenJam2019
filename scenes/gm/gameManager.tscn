@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scripts/gm/gameManager.gd" type="Script" id=1]
 [ext_resource path="res://assets/gfx/background.png" type="Texture" id=2]
 [ext_resource path="res://assets/gfx/platform/platform.png" type="Texture" id=3]
 [ext_resource path="res://scenes/elements/tile.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/ui/attackIndicator.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/ui/hud.tscn" type="PackedScene" id=6]
 
 [sub_resource type="Animation" id=1]
 resource_name = "idle"
@@ -21,6 +22,22 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ Vector2( 0, 0 ), Vector2( 0, 4 ), Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "hit"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath("alarmOverlay:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.788235, 0.188235, 0.219608, 0 ), Color( 0.788235, 0.188235, 0.219608, 0.25098 ), Color( 0.788235, 0.188235, 0.219608, 0 ) ]
 }
 
 [node name="gameManager" type="Control"]
@@ -55,10 +72,21 @@ position = Vector2( -68, -4 )
 
 [node name="tiles" type="YSort" parent="platform"]
 
+[node name="alarmOverlay" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.788235, 0.188235, 0.219608, 0 )
+
 [node name="attackIndicator" parent="." instance=ExtResource( 5 )]
+
+[node name="hud" parent="." instance=ExtResource( 6 )]
 
 [node name="clickDelay" type="Timer" parent="."]
 wait_time = 0.75
+one_shot = true
+
+[node name="attackDelay" type="Timer" parent="."]
+wait_time = 0.5
 one_shot = true
 
 [node name="Button" type="Button" parent="."]
@@ -68,14 +96,11 @@ margin_right = 634.308
 margin_bottom = 353.133
 text = "Fullscreen"
 
-[node name="turnLabel" type="Label" parent="."]
-margin_left = 262.786
-margin_top = 6.8256
-margin_right = 302.786
-margin_bottom = 20.8256
-
 [node name="platformAnimation" type="AnimationPlayer" parent="."]
 autoplay = "idle"
 anims/idle = SubResource( 1 )
+
+[node name="playerHitAnimation" type="AnimationPlayer" parent="."]
+anims/hit = SubResource( 2 )
 [connection signal="timeout" from="clickDelay" to="." method="_on_clickDelay_timeout"]
 [connection signal="button_up" from="Button" to="." method="_on_Button_button_up"]

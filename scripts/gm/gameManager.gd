@@ -21,17 +21,17 @@ var pushRow = -1
 var board = []
 var turnsLeft = 5
 var attackLane = 0
-var attackStrength = 6
+var attackStrength = 8
 
 
 func _ready():
 	randomize()
 	populateBoard()
 	nextTile()
-	attackGetNewTarget()
+	getNewTarget()
 
 
-func attackGetNewTarget():
+func getNewTarget():
 	attackLane = randi() % 5
 	attackStrength += 2
 	$attackIndicator.setStrength(attackStrength)
@@ -39,8 +39,43 @@ func attackGetNewTarget():
 	turnUpdate(true)
 
 
-func attackPerform():
-	pass
+func performAttack():
+	var firstBlock = Vector2(attackLane, 0)
+	var lifes = attackStrength
+
+	# Stop user from doing stuff
+	$clickDelay.stop()
+	clickReady = false
+	
+	for step in range(0, 5):
+		$attackDelay.start()
+		var node = board[firstBlock.y + step][firstBlock.x]
+		
+		if node.power <= lifes:
+			# Destroy nodes :)
+			lifes -= node.power
+			node.destroy()
+			var instance = spawnNewTile(firstBlock + Vector2(0,step))
+			board[firstBlock.y + step][firstBlock.x] = instance
+		else:
+			# Quit loop
+			lifes -= node.power
+			break
+		$attackIndicator.setStrength(lifes)
+		yield($attackDelay, "timeout")
+	getNewTarget()
+	
+	if lifes > 0:
+		$hud.killHumans(max(lifes, 0))
+		$playerHitAnimation.play("hit")
+	$hud.saveHumans()
+	
+	# Let user do stuff
+	clickReady = true
+
+
+func thisIsTheEndTrigger():
+	print("THIS IS THE END MY FRIEND")
 
 
 func nextTile():
@@ -53,10 +88,12 @@ func turnUpdate(reset = false):
 	if reset:
 		turnsLeft = 5 + 1
 	turnsLeft -= 1
-	$turnLabel.set_text("Turns Left: " + str(turnsLeft))
+	$hud.updateTurns(turnsLeft)
+	
+	$attackIndicator.setTurn(turnsLeft)
 	
 	if turnsLeft == 0:
-		attackPerform()
+		performAttack()
 
 
 func _input(event):
@@ -184,21 +221,29 @@ func getOffGridPosition(ownPos):
 	return ownPos
 
 
+
+
 func populateBoard():
 	for y in range(0, 5):
 		var row = []
 		for x in range(0, 5):
-			var instance = tileNode.instance()
-			var color = randi()%3
-			var power = randi()%2
-			instance.setup(color, power)
-			instance.position = bp + Vector2(x * 64, y * 32)
-			$platform/tiles.add_child(instance)
+			var instance = spawnNewTile(Vector2(x, y))
 			row.append(instance)
 		board.append(row)
 	
 	print(board)
 
+
+func spawnNewTile(pos):
+	var instance = tileNode.instance()
+	var color = randi()%3
+	var power = randi()%2
+	var scaler = Vector2(64, 32)
+
+	instance.setup(color, power)
+	instance.position = bp + Vector2(pos.x, pos.y) * scaler
+	$platform/tiles.add_child(instance)
+	return instance
 
 func _on_Button_button_up():
 	Global.fullscreen()

@@ -4,6 +4,7 @@ var gm = null
 
 enum TileAfterLife {Nothing, Die, Explode}
 
+
 var config = {
 	"fullscreen": true,
 	"volume": 10

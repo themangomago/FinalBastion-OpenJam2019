@@ -1,12 +1,29 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scripts/elements/tile.gd" type="Script" id=1]
 [ext_resource path="res://assets/gfx/turrets/tile.png" type="Texture" id=2]
 [ext_resource path="res://assets/fonts/mago3.2.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://assets/gfx/turrets/explosion.png" type="Texture" id=4]
 
 [sub_resource type="DynamicFont" id=1]
 outline_color = Color( 0.0784314, 0.0588235, 0.137255, 1 )
 font_data = ExtResource( 3 )
+
+[sub_resource type="Animation" id=2]
+resource_name = "explode"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath("explosion:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 1, 2, 3, 4, 0 ]
+}
 
 [node name="tile" type="Node2D"]
 script = ExtResource( 1 )
@@ -23,13 +40,25 @@ margin_right = 39.4533
 margin_bottom = 21.5339
 
 [node name="Label" type="Label" parent="."]
-margin_left = 18.1829
-margin_top = 17.1288
-margin_right = 58.1829
-margin_bottom = 31.1288
+margin_left = 3.0
+margin_top = 17.0
+margin_right = 61.0
+margin_bottom = 31.0
 custom_fonts/font = SubResource( 1 )
-custom_colors/font_color = Color( 0.776471, 0.721569, 0.721569, 1 )
-text = "Text"
+custom_colors/font_color = Color( 0.635294, 1, 1, 1 )
+text = "Level 0"
+align = 1
 
 [node name="Tween" type="Tween" parent="."]
+
+[node name="explosion" type="Sprite" parent="."]
+z_index = 128
+texture = ExtResource( 4 )
+centered = false
+offset = Vector2( 0, -16 )
+hframes = 5
+
+[node name="animation" type="AnimationPlayer" parent="."]
+anims/explode = SubResource( 2 )
 [connection signal="tween_completed" from="Tween" to="." method="_on_Tween_tween_completed"]
+[connection signal="animation_finished" from="animation" to="." method="_on_animation_animation_finished"]
