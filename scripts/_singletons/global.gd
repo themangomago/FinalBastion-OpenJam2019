@@ -2,12 +2,13 @@ extends Node
 
 var gm = null
 
+enum GameState {Menu, Tutorial, Game}
 enum TileAfterLife {Nothing, Die, Explode}
 
 
 var config = {
-	"fullscreen": true,
-	"volume": 10
+	"tutorialCompleted": false,
+	"highscore": 0
 }
 
 func _ready():
@@ -22,8 +23,22 @@ func getGameMaster():
 	return gm
 
 
+func saveConfig():
+	var cfgFile = File.new()
+	cfgFile.open("user://config.cfg", File.WRITE)
+	cfgFile.store_line(to_json(config))
+	cfgFile.close()
+
 func loadConfig():
-	pass
+	var cfgFile = File.new()
+	if not cfgFile.file_exists("user://config.cfg"):
+		saveConfig()
+		return
+	
+	cfgFile.open("user://config.cfg", File.READ)
+	var data = parse_json(cfgFile.get_line())
+	config.tutorialCompleted = data.tutorialCompleted
+	config.highscore = data.highscore
 
 
 func windowScale(scale = 2):
@@ -36,7 +51,7 @@ func windowScale(scale = 2):
 func fullscreen():
 	if OS.window_fullscreen:
 		OS.window_fullscreen = false
-		windowScale(1)
+		windowScale(2)
 	else:
 		windowScale(3)
 		OS.window_fullscreen = true

@@ -19,6 +19,7 @@ var firstBlock = Vector2(0,0)
 var pushRow = -1
 
 # Game States
+var gameState = Global.GameState.Menu
 var board = []
 var turnsLeft = 5
 var attackLane = 0
@@ -37,6 +38,19 @@ func _ready():
 	nextTile()
 	getNewTarget()
 
+
+func changeGameState(to):
+	match to:
+		Global.GameState.Menu:
+			$menu.show()
+			$game.hide()
+		Global.GameState.Tutorial:
+			$menu.hide()
+			$game.hide()
+		_:
+			$menu.hide()
+			$game.show()
+	gameState = to
 
 func getNewTarget():
 	attackLane = randi() % 5
@@ -119,16 +133,17 @@ func turnUpdate(reset = false):
 
 
 func _input(event):
-	if event is InputEventMouseButton:
-		inputProcessClick()
-	elif event is InputEventMouseMotion:
-		$mouse.set_text(str(event.position))
-		var coords = worldToMap(event.position)
-		$debug.set_text(str(coords))
-		validMousePosition = inputCheckBuildPosition(coords)
-
-		if validMousePosition:
-			$game/platform/tile.position = Vector2(64, 32) * coords + bp
+	if gameState == Global.GameState.Game:
+		if event is InputEventMouseButton:
+			inputProcessClick()
+		elif event is InputEventMouseMotion:
+			$mouse.set_text(str(event.position))
+			var coords = worldToMap(event.position)
+			$debug.set_text(str(coords))
+			validMousePosition = inputCheckBuildPosition(coords)
+	
+			if validMousePosition:
+				$game/platform/tile.position = Vector2(64, 32) * coords + bp
 
 
 func inputProcessClick():
@@ -267,11 +282,10 @@ func spawnNewTile(pos):
 	$game/platform/tiles.add_child(instance)
 	return instance
 
-func _on_Button_button_up():
-	Global.fullscreen()
-
 
 func _on_clickDelay_timeout():
 	clickReady = true
 
 
+func _on_fullscreen_button_up():
+	Global.fullscreen()

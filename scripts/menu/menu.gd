@@ -1,13 +1,23 @@
 extends Control
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
+var tutorialCompleted = false
 
-# Called when the node enters the scene tree for the first time.
+
 func _ready():
-	pass # Replace with function body.
+	if Global.config.tutorialCompleted:
+		$newBtn.disabled = false
+		$newBtn/RichTextLabel.bbcode_text = "[center]Start A New Game[/center]"
+	else:
+		$newBtn.disabled = true
+		$newBtn/RichTextLabel.bbcode_text = "[center][color=#90a1a8]Start A New Game[/color][/center]"
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _on_tutorialBtn_button_up():
+	get_parent().changeGameState(Global.GameState.Tutorial)
+
+
+func _on_newBtn_button_up():
+	get_parent().changeGameState(Global.GameState.Game)
+
+
+func _on_quitBtn_button_up():
+	get_tree().quit()
