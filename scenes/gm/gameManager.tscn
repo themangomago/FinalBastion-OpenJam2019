@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://scripts/gm/gameManager.gd" type="Script" id=1]
 [ext_resource path="res://assets/gfx/meteoroid.png" type="Texture" id=2]
@@ -20,10 +20,11 @@
 [ext_resource path="res://assets/gfx/menu/hoverButton.png" type="Texture" id=18]
 [ext_resource path="res://assets/gfx/menu/inactiveButton.png" type="Texture" id=19]
 [ext_resource path="res://scripts/tutorial/tutorial.gd" type="Script" id=20]
-[ext_resource path="res://assets/gfx/tutorial/textbg.png" type="Texture" id=21]
-[ext_resource path="res://assets/gfx/tutorial/next.png" type="Texture" id=22]
-[ext_resource path="res://assets/gfx/ui/fullscreen.png" type="Texture" id=23]
-[ext_resource path="res://assets/music/music.ogg" type="AudioStream" id=24]
+[ext_resource path="res://assets/gfx/tutorial/tutOverlay.png" type="Texture" id=21]
+[ext_resource path="res://assets/gfx/tutorial/textbg.png" type="Texture" id=22]
+[ext_resource path="res://assets/gfx/tutorial/next.png" type="Texture" id=23]
+[ext_resource path="res://assets/gfx/ui/fullscreen.png" type="Texture" id=24]
+[ext_resource path="res://assets/music/music.ogg" type="AudioStream" id=25]
 
 [sub_resource type="Animation" id=1]
 resource_name = "idle"
@@ -350,9 +351,14 @@ position = Vector2( -68, -4 )
 
 [node name="hud" parent="tutorial" instance=ExtResource( 11 )]
 
+[node name="tutOverlay" type="Sprite" parent="tutorial"]
+texture = ExtResource( 21 )
+centered = false
+hframes = 7
+
 [node name="textBg" type="Sprite" parent="tutorial"]
 position = Vector2( 324, 320 )
-texture = ExtResource( 21 )
+texture = ExtResource( 22 )
 
 [node name="tutorialText" type="RichTextLabel" parent="tutorial/textBg"]
 margin_left = -104.0
@@ -369,10 +375,10 @@ margin_left = 140.897
 margin_top = 20.5464
 margin_right = 156.897
 margin_bottom = 36.5464
-texture_normal = ExtResource( 22 )
+texture_normal = ExtResource( 23 )
 
 [node name="textDelay" type="Timer" parent="tutorial"]
-wait_time = 0.03
+wait_time = 0.02
 
 [node name="clickDelay" type="Timer" parent="."]
 wait_time = 0.75
@@ -387,7 +393,7 @@ margin_left = 572.0
 margin_top = 341.0
 margin_right = 636.0
 margin_bottom = 357.0
-texture_normal = ExtResource( 23 )
+texture_normal = ExtResource( 24 )
 
 [node name="platformAnimation" type="AnimationPlayer" parent="."]
 autoplay = "idle"
@@ -405,7 +411,8 @@ anims/fly = SubResource( 4 )
 
 [node name="musicPlayer" type="AudioStreamPlayer2D" parent="."]
 position = Vector2( 320, 170 )
-stream = ExtResource( 24 )
+stream = ExtResource( 25 )
+autoplay = true
 bus = "music"
 [connection signal="button_up" from="game/menu" to="." method="_on_menu_button_up"]
 [connection signal="button_up" from="game/reset" to="." method="_on_reset_button_up"]
