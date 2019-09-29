@@ -5,7 +5,7 @@ enum PushDirection {LEFT, RIGHT, DOWN, UP}
 
 # Consts
 const bp = Vector2(164, 96)
-const startStrength = 6
+const startStrength = 2
 
 # Preloads
 onready var tileNode = preload("res://scenes/elements/tile.tscn")
