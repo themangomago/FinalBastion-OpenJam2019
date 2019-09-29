@@ -34,9 +34,13 @@ func _process(delta):
 	$meteoroid.scroll_offset = Vector2(offset, offset)
 
 func _ready():
+	changeGameState(Global.GameState.Menu)
 	resetGame()
 
 func resetGame():
+	print("reset")
+	# Reset game over screen
+	$game/gameover.hide()
 	# Remove all Tiles
 	for node in $game/platform/tiles.get_children():
 		$game/platform/tiles.remove_child(node)
@@ -47,6 +51,9 @@ func resetGame():
 	attackStrength = startStrength
 	# Reset HUD
 	$game/hud.init()
+	
+	# Reset Mouse
+	clickReady = true
 	
 	# Init
 	randomize()
@@ -59,12 +66,16 @@ func changeGameState(to):
 		Global.GameState.Menu:
 			$menu.show()
 			$game.hide()
+			$tutorial.hide()
 		Global.GameState.Tutorial:
 			$menu.hide()
 			$game.hide()
+			$tutorial.show()
+			$tutorial.init()
 		_:
 			$menu.hide()
 			$game.show()
+			$tutorial.hide()
 	gameState = to
 
 func getNewTarget():
@@ -124,7 +135,9 @@ func performAttack():
 
 
 func thisIsTheEndTrigger():
-	print("THIS IS THE END MY FRIEND")
+	$clickDelay.stop()
+	clickReady = false
+	$game/gameover.show()
 
 
 func nextTile():
@@ -162,7 +175,7 @@ func _input(event):
 
 
 func inputProcessClick():
-	if validMousePosition and clickReady:
+	if validMousePosition and clickReady and not $game/gameover.is_visible():
 		clickReady = false
 		$clickDelay.start()
 		var mergeableFound = -1
@@ -313,3 +326,5 @@ func _on_reset_button_up():
 func _on_menu_button_up():
 	resetGame()
 	changeGameState(Global.GameState.Menu)
+
+

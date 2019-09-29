@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://scripts/gm/gameManager.gd" type="Script" id=1]
 [ext_resource path="res://assets/gfx/meteoroid.png" type="Texture" id=2]
@@ -9,17 +9,21 @@
 [ext_resource path="res://scenes/elements/tile.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/gfx/platform/platform.png" type="Texture" id=8]
 [ext_resource path="res://scenes/ui/attackIndicator.tscn" type="PackedScene" id=9]
-[ext_resource path="res://scenes/ui/hud.tscn" type="PackedScene" id=10]
-[ext_resource path="res://assets/gfx/ui/leave.png" type="Texture" id=11]
-[ext_resource path="res://assets/gfx/ui/reset.png" type="Texture" id=12]
-[ext_resource path="res://scripts/menu/menu.gd" type="Script" id=13]
-[ext_resource path="res://assets/gfx/menu/title.png" type="Texture" id=14]
-[ext_resource path="res://assets/gfx/menu/ship.png" type="Texture" id=15]
-[ext_resource path="res://assets/gfx/menu/activeButton.png" type="Texture" id=16]
-[ext_resource path="res://assets/gfx/menu/hoverButton.png" type="Texture" id=17]
-[ext_resource path="res://assets/gfx/menu/inactiveButton.png" type="Texture" id=18]
-[ext_resource path="res://assets/gfx/ui/fullscreen.png" type="Texture" id=19]
-[ext_resource path="res://assets/music/music.ogg" type="AudioStream" id=20]
+[ext_resource path="res://assets/gfx/ui/gameover.png" type="Texture" id=10]
+[ext_resource path="res://scenes/ui/hud.tscn" type="PackedScene" id=11]
+[ext_resource path="res://assets/gfx/ui/leave.png" type="Texture" id=12]
+[ext_resource path="res://assets/gfx/ui/reset.png" type="Texture" id=13]
+[ext_resource path="res://scripts/menu/menu.gd" type="Script" id=14]
+[ext_resource path="res://assets/gfx/menu/title.png" type="Texture" id=15]
+[ext_resource path="res://assets/gfx/menu/ship.png" type="Texture" id=16]
+[ext_resource path="res://assets/gfx/menu/activeButton.png" type="Texture" id=17]
+[ext_resource path="res://assets/gfx/menu/hoverButton.png" type="Texture" id=18]
+[ext_resource path="res://assets/gfx/menu/inactiveButton.png" type="Texture" id=19]
+[ext_resource path="res://scripts/tutorial/tutorial.gd" type="Script" id=20]
+[ext_resource path="res://assets/gfx/tutorial/textbg.png" type="Texture" id=21]
+[ext_resource path="res://assets/gfx/tutorial/next.png" type="Texture" id=22]
+[ext_resource path="res://assets/gfx/ui/fullscreen.png" type="Texture" id=23]
+[ext_resource path="res://assets/music/music.ogg" type="AudioStream" id=24]
 
 [sub_resource type="Animation" id=1]
 resource_name = "idle"
@@ -51,7 +55,35 @@ tracks/1/keys = {
 }
 
 [sub_resource type="Animation" id=2]
-resource_name = "hit"
+resource_name = "idle"
+length = 3.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("tutorial/platform:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.5, 3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 0, 4 ), Vector2( 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("tutorial/platform:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6, 2.8, 3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ]
+}
+
+[sub_resource type="Animation" id=3]
 length = 0.2
 tracks/0/type = "value"
 tracks/0/path = NodePath("game/alarmOverlay:color")
@@ -66,8 +98,7 @@ tracks/0/keys = {
 "values": [ Color( 0.788235, 0.188235, 0.219608, 0 ), Color( 0.788235, 0.188235, 0.219608, 0.25098 ), Color( 0.788235, 0.188235, 0.219608, 0 ) ]
 }
 
-[sub_resource type="Animation" id=3]
-resource_name = "fly"
+[sub_resource type="Animation" id=4]
 length = 0.7
 tracks/0/type = "value"
 tracks/0/path = NodePath("game/ship:position")
@@ -139,6 +170,7 @@ centered = false
 position = Vector2( 2, 29 )
 
 [node name="platform" type="Sprite" parent="game"]
+editor/display_folded = true
 texture = ExtResource( 8 )
 centered = false
 offset = Vector2( 160, 96 )
@@ -156,34 +188,50 @@ color = Color( 0.788235, 0.188235, 0.219608, 0 )
 
 [node name="attackIndicator" parent="game" instance=ExtResource( 9 )]
 
-[node name="hud" parent="game" instance=ExtResource( 10 )]
+[node name="gameover" type="Control" parent="game"]
+editor/display_folded = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ColorRect" type="ColorRect" parent="game/gameover"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.0745098, 0.0745098, 0.0745098, 0.501961 )
+
+[node name="sprite" type="Sprite" parent="game/gameover"]
+position = Vector2( 320, 140 )
+texture = ExtResource( 10 )
+
+[node name="hud" parent="game" instance=ExtResource( 11 )]
 
 [node name="menu" type="TextureButton" parent="game"]
 margin_left = 572.0
 margin_top = 323.0
 margin_right = 636.0
 margin_bottom = 339.0
-texture_normal = ExtResource( 11 )
+texture_normal = ExtResource( 12 )
 
 [node name="reset" type="TextureButton" parent="game"]
 margin_left = 572.0
 margin_top = 305.0
 margin_right = 636.0
 margin_bottom = 321.0
-texture_normal = ExtResource( 12 )
+texture_normal = ExtResource( 13 )
 
 [node name="menu" type="Control" parent="."]
+editor/display_folded = true
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource( 13 )
+script = ExtResource( 14 )
 
 [node name="title" type="Sprite" parent="menu"]
-texture = ExtResource( 14 )
+texture = ExtResource( 15 )
 centered = false
 
 [node name="ship" type="Sprite" parent="menu"]
 position = Vector2( 172, 288 )
-texture = ExtResource( 15 )
+texture = ExtResource( 16 )
 
 [node name="tutorialBtn" type="TextureButton" parent="menu"]
 editor/display_folded = true
@@ -193,9 +241,9 @@ margin_left = -80.0
 margin_top = 96.0
 margin_right = 80.0
 margin_bottom = 128.0
-texture_normal = ExtResource( 16 )
-texture_hover = ExtResource( 17 )
-texture_disabled = ExtResource( 18 )
+texture_normal = ExtResource( 17 )
+texture_hover = ExtResource( 18 )
+texture_disabled = ExtResource( 19 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="menu/tutorialBtn"]
 anchor_right = 1.0
@@ -216,9 +264,9 @@ margin_top = 144.0
 margin_right = 80.0
 margin_bottom = 176.0
 disabled = true
-texture_normal = ExtResource( 16 )
-texture_hover = ExtResource( 17 )
-texture_disabled = ExtResource( 18 )
+texture_normal = ExtResource( 17 )
+texture_hover = ExtResource( 18 )
+texture_disabled = ExtResource( 19 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="menu/newBtn"]
 anchor_right = 1.0
@@ -239,9 +287,9 @@ margin_left = -80.0
 margin_top = 208.0
 margin_right = 80.0
 margin_bottom = 240.0
-texture_normal = ExtResource( 16 )
-texture_hover = ExtResource( 17 )
-texture_disabled = ExtResource( 18 )
+texture_normal = ExtResource( 17 )
+texture_hover = ExtResource( 18 )
+texture_disabled = ExtResource( 19 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="menu/quitBtn"]
 anchor_right = 1.0
@@ -272,6 +320,60 @@ custom_fonts/font = ExtResource( 4 )
 text = "Version"
 align = 2
 
+[node name="tutorial" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 20 )
+
+[node name="nextTileBg" type="Sprite" parent="tutorial"]
+editor/display_folded = true
+position = Vector2( 0, 296 )
+texture = ExtResource( 6 )
+centered = false
+
+[node name="tileNext" parent="tutorial/nextTileBg" instance=ExtResource( 7 )]
+position = Vector2( 2, 29 )
+
+[node name="platform" type="Sprite" parent="tutorial"]
+editor/display_folded = true
+texture = ExtResource( 8 )
+centered = false
+offset = Vector2( 160, 96 )
+hframes = 2
+
+[node name="tile" parent="tutorial/platform" instance=ExtResource( 7 )]
+position = Vector2( -68, -4 )
+
+[node name="tiles" type="YSort" parent="tutorial/platform"]
+
+[node name="attackIndicator" parent="tutorial" instance=ExtResource( 9 )]
+
+[node name="hud" parent="tutorial" instance=ExtResource( 11 )]
+
+[node name="textBg" type="Sprite" parent="tutorial"]
+position = Vector2( 324, 320 )
+texture = ExtResource( 21 )
+
+[node name="tutorialText" type="RichTextLabel" parent="tutorial/textBg"]
+margin_left = -104.0
+margin_top = -20.0
+margin_right = 156.0
+margin_bottom = 36.0
+custom_fonts/normal_font = ExtResource( 4 )
+bbcode_enabled = true
+bbcode_text = "Test Text"
+text = "Test Text"
+
+[node name="nextBtn" type="TextureButton" parent="tutorial/textBg"]
+margin_left = 140.897
+margin_top = 20.5464
+margin_right = 156.897
+margin_bottom = 36.5464
+texture_normal = ExtResource( 22 )
+
+[node name="textDelay" type="Timer" parent="tutorial"]
+wait_time = 0.03
+
 [node name="clickDelay" type="Timer" parent="."]
 wait_time = 0.75
 one_shot = true
@@ -285,26 +387,32 @@ margin_left = 572.0
 margin_top = 341.0
 margin_right = 636.0
 margin_bottom = 357.0
-texture_normal = ExtResource( 19 )
+texture_normal = ExtResource( 23 )
 
 [node name="platformAnimation" type="AnimationPlayer" parent="."]
 autoplay = "idle"
 anims/idle = SubResource( 1 )
 
+[node name="platformTutAnimation" type="AnimationPlayer" parent="."]
+autoplay = "idle"
+anims/idle = SubResource( 2 )
+
 [node name="playerHitAnimation" type="AnimationPlayer" parent="."]
-anims/hit = SubResource( 2 )
+anims/hit = SubResource( 3 )
 
 [node name="shipAnimation" type="AnimationPlayer" parent="."]
-anims/fly = SubResource( 3 )
+anims/fly = SubResource( 4 )
 
 [node name="musicPlayer" type="AudioStreamPlayer2D" parent="."]
 position = Vector2( 320, 170 )
-stream = ExtResource( 20 )
+stream = ExtResource( 24 )
 bus = "music"
 [connection signal="button_up" from="game/menu" to="." method="_on_menu_button_up"]
 [connection signal="button_up" from="game/reset" to="." method="_on_reset_button_up"]
 [connection signal="button_up" from="menu/tutorialBtn" to="menu" method="_on_tutorialBtn_button_up"]
 [connection signal="button_up" from="menu/newBtn" to="menu" method="_on_newBtn_button_up"]
 [connection signal="button_up" from="menu/quitBtn" to="menu" method="_on_quitBtn_button_up"]
+[connection signal="button_up" from="tutorial/textBg/nextBtn" to="tutorial" method="_on_nextBtn_button_up"]
+[connection signal="timeout" from="tutorial/textDelay" to="tutorial" method="_on_textDelay_timeout"]
 [connection signal="timeout" from="clickDelay" to="." method="_on_clickDelay_timeout"]
 [connection signal="button_up" from="fullscreen" to="." method="_on_fullscreen_button_up"]
