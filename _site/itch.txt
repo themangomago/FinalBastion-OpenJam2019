@@ -1,0 +1,8 @@
+<p><em>Commander! Large meteoroid storms are incoming! You will have to defend the Earth on the Final Bastion, while we are evacuating.</em></p>
+<p>Final Bastion is a creative puzzler with elements from classic Tower Defense games and 2048. You will have to upgrade your turrets while placing a new turret each round. Every 5 turns you will have to eliminate a growing meteoroid storm before it hits the earth.</p>
+<p>How many people can you save?</p>
+<h3>Open Jam</h3>
+<p>Final Bastion is my contribution to the Open Jam 2019 where people all around the globe celebrating FOSS. The game was created entirely with open-source tools and is, of course, available as open-source on <a href="https://github.com/themangomago/FinalBastion-OpenJam2019" target="_blank">GitHub</a>.</p>
+<p>Tools used during the Game Jam: Godot 3.1.1, LibreSprite, JFXR, Audacity and was developed on Linux Mint.</p>
+<h3>License</h3>
+<p>All assets are released und the 'The Unlicense' license expect the epic soundtrack from <a href="https://www.orchestralis.net/#/" target="_blank">Rafael Krux</a> which is licensed under Creative Commons 0.</p>

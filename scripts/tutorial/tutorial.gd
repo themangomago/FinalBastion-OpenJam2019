@@ -67,6 +67,7 @@ func nextStep():
 			$textBg/nextBtn.show()
 		_:
 			Global.config.tutorialCompleted = true
+			Global.saveConfig()
 			get_parent().changeGameState(Global.GameState.Menu)
 
 func init():

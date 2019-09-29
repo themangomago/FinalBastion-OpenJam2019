@@ -1,9 +1,8 @@
 extends Control
 
-var tutorialCompleted = false
-
 
 func _ready():
+	print(Global.config.tutorialCompleted)
 	$version.set_text(Global.version)
 	
 	if Global.config.tutorialCompleted:

@@ -67,6 +67,7 @@ func changeGameState(to):
 			$menu.show()
 			$game.hide()
 			$tutorial.hide()
+			$menu._ready()
 		Global.GameState.Tutorial:
 			$menu.hide()
 			$game.hide()

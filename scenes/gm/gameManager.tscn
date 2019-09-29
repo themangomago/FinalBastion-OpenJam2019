@@ -138,6 +138,7 @@ texture = ExtResource( 3 )
 centered = false
 
 [node name="mouse" type="Label" parent="."]
+visible = false
 margin_left = 5.11929
 margin_top = 145.3
 margin_right = 45.1193
@@ -162,7 +163,6 @@ position = Vector2( 550, 410 )
 texture = ExtResource( 5 )
 
 [node name="nextTileBg" type="Sprite" parent="game"]
-editor/display_folded = true
 position = Vector2( 0, 296 )
 texture = ExtResource( 6 )
 centered = false
